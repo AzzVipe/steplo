@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
+import SessionTracker from "./components/SessionTracker";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -10,6 +11,7 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
 	<StrictMode>
+		<SessionTracker />
 		<App />
 	</StrictMode>
 );
