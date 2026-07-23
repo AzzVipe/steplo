@@ -1,0 +1,204 @@
+@reference "../index.css";
+
+.landing-nav {
+	background-color: var(--color-card);
+	border-bottom: 1px solid var(--color-border);
+	@apply sticky top-0 z-40 backdrop-blur;
+}
+
+.landing-nav-inner {
+	@apply max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-3;
+}
+
+.landing-logo {
+	color: var(--color-text);
+	@apply text-lg font-semibold tracking-tight flex items-center gap-2;
+}
+
+.landing-logo-mark {
+	background-color: var(--color-accent);
+	@apply w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0;
+}
+
+/* Hero */
+
+.landing-hero {
+	@apply max-w-5xl mx-auto px-4 pt-16 pb-20 grid gap-10;
+}
+
+@media (min-width: 900px) {
+	.landing-hero {
+		grid-template-columns: 1.1fr 0.9fr;
+		align-items: center;
+	}
+}
+
+.landing-eyebrow {
+	color: var(--color-accent);
+	background-color: var(--color-accent-soft);
+	@apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full mb-4;
+}
+
+.landing-h1 {
+	color: var(--color-text);
+	@apply text-4xl sm:text-5xl font-bold tracking-tight leading-[1.1] mb-4;
+}
+
+.landing-subtitle {
+	color: var(--color-text-muted);
+	@apply text-lg leading-relaxed mb-7 max-w-lg;
+}
+
+.landing-cta-row {
+	@apply flex flex-wrap gap-3;
+}
+
+/* Code panel - used for every config snippet on the page */
+
+.code-panel {
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	@apply overflow-hidden shadow-sm;
+}
+
+.code-panel-header {
+	border-bottom: 1px solid var(--color-border);
+	@apply flex items-center gap-1.5 px-4 py-2.5;
+}
+
+.code-panel-dot {
+	@apply w-2.5 h-2.5 rounded-full;
+}
+
+.code-panel-body {
+	color: var(--color-text);
+	@apply px-4 py-4 text-[13px] leading-relaxed overflow-x-auto;
+	font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+.code-key {
+	color: var(--color-text-muted);
+}
+
+.code-string {
+	color: var(--color-accent);
+}
+
+.code-bool {
+	color: var(--color-success);
+}
+
+.code-comment {
+	color: var(--color-text-muted);
+	font-style: italic;
+}
+
+/* Sections */
+
+.landing-section {
+	@apply max-w-5xl mx-auto px-4 py-16;
+}
+
+.landing-section-heading {
+	color: var(--color-text);
+	@apply text-2xl sm:text-3xl font-bold tracking-tight mb-3 text-center;
+}
+
+.landing-section-subheading {
+	color: var(--color-text-muted);
+	@apply text-base max-w-xl mx-auto mb-12 text-center;
+}
+
+/* Feature grid */
+
+.feature-grid {
+	@apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.feature-card {
+	background-color: var(--color-card);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	@apply p-5 transition-colors;
+}
+
+.feature-icon {
+	background-color: var(--color-accent-soft);
+	color: var(--color-accent);
+	@apply w-9 h-9 rounded-lg flex items-center justify-center mb-3;
+}
+
+.feature-title {
+	color: var(--color-text);
+	@apply text-sm font-semibold mb-1.5;
+}
+
+.feature-desc {
+	color: var(--color-text-muted);
+	@apply text-sm leading-relaxed;
+}
+
+/* Customize-live panel (theme + stepper selectors) */
+
+.customize-panel {
+	background-color: var(--color-card);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	@apply p-6 sm:p-8;
+}
+
+.customize-row {
+	@apply flex flex-wrap gap-8 justify-center;
+}
+
+/* Field type grid */
+
+.type-grid {
+	@apply grid gap-3 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.type-card {
+	background-color: var(--color-card);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius);
+	@apply p-4;
+}
+
+.type-card-name {
+	color: var(--color-text);
+	@apply text-sm font-mono font-medium mb-1;
+}
+
+/* Showcase cards */
+
+.showcase-card {
+	background-color: var(--color-card);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	@apply p-5 flex flex-col gap-3 transition-transform;
+}
+
+.showcase-card:hover {
+	transform: translateY(-2px);
+}
+
+/* Tech stack pills */
+
+.tech-pill {
+	background-color: var(--color-card);
+	border: 1px solid var(--color-border);
+	color: var(--color-text);
+	@apply text-sm px-3.5 py-1.5 rounded-full font-medium;
+}
+
+/* Footer / hire section */
+
+.landing-footer {
+	background-color: var(--color-card);
+	border-top: 1px solid var(--color-border);
+}
+
+.landing-footer-inner {
+	@apply max-w-5xl mx-auto px-4 py-14 text-center;
+}
