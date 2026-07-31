@@ -177,6 +177,145 @@ const TECH_STACK = [
 	"Vitest",
 ];
 
+const CONFIG_EXAMPLES = [
+	{
+		title: "Anatomy of a config",
+		desc: "Every form is one object: metadata, an ordered list of steps, and a flat list of fields. Each field just declares which step it belongs to.",
+		label: "config.ts",
+		code: `{
+  meta: { id: "warranty-claim", title: "Product Warranty Claim", version: 1 },
+  steps: [
+    { id: "productInfo", title: "Product Info" },
+    { id: "resolution", title: "Resolution" },
+  ],
+  fields: [
+    { name: "productName", step: "productInfo", type: "text", label: "Product name" },
+    { name: "preferredResolution", step: "resolution", type: "visualCardSelect", label: "..." },
+  ],
+}`,
+	},
+	{
+		title: "Conditional field visibility",
+		desc: "showIf hides a field until a condition on another field is met. Hidden fields are excluded from validation automatically, so a required field never blocks submission while it isn't shown.",
+		label: "freelanceIntake.config.ts",
+		code: `{
+  name: "brandAssets",
+  type: "fileUpload",
+  label: "Upload brand assets",
+  showIf: { field: "hasBranding", equals: "yes" },
+  validation: { required: true },
+}`,
+	},
+	{
+		title: "Step-level skip logic",
+		desc: "skipStepIf jumps straight past an entire step, not just one field, when its condition matches. No manual step-index math anywhere in your code.",
+		label: "warrantyClaim.config.ts",
+		code: `{
+  name: "needsReturnShipping",
+  type: "choiceCard",
+  label: "Do you need a return shipping label?",
+  skipStepIf: {
+    field: "needsReturnShipping",
+    equals: "no",
+    goTo: "contact",
+  },
+}`,
+	},
+	{
+		title: "Validation rules",
+		desc: "required, minLength, maxLength, pattern, min, and max all compile into real Zod rules. A custom message overrides the default.",
+		label: "speakerSubmission.config.ts",
+		code: `{
+  name: "talkAbstract",
+  type: "textarea",
+  label: "Talk abstract",
+  validation: {
+    required: true,
+    minLength: 50,
+    message: "Give us at least a few sentences (50+ characters)",
+  },
+}
+{
+  name: "supportHoursPerMonth",
+  type: "number",
+  validation: { required: true, min: 1, max: 160 },
+}`,
+	},
+	{
+		title: "Dependent dropdowns",
+		desc: "dependsOn plus optionsSource wires one field's options to another field's current value. The dependent field resets itself when its parent changes.",
+		label: "freelanceIntake.config.ts",
+		code: `{
+  name: "country",
+  type: "select",
+  label: "Country",
+  optionsSource: "static:countries",
+},
+{
+  name: "city",
+  type: "linkedSelect",
+  label: "City",
+  dependsOn: "country",
+  optionsSource: "static:cityByCountry",
+}`,
+	},
+	{
+		title: "Per-answer help text",
+		desc: "answerHelp is keyed by the option's value, not a loose label, so it can be looked up programmatically instead of pattern-matched.",
+		label: "freelanceIntake.config.ts",
+		code: `{
+  name: "hasBranding",
+  type: "choiceCard",
+  label: "Do you have existing branding?",
+  options: [
+    { value: "yes", label: "Yes" },
+    { value: "no", label: "No" },
+  ],
+  answerHelp: {
+    yes: "You'll be asked to upload your brand assets next.",
+    no: null,
+  },
+}`,
+	},
+	{
+		title: "Multi-value fields",
+		desc: "tagInput supports free-form, creatable entries alongside suggestions from a reference source. chipMultiSelect toggles any number of fixed options.",
+		label: "freelanceIntake.config.ts",
+		code: `{
+  name: "requiredSkills",
+  type: "tagInput",
+  label: "Required skills",
+  optionsSource: "reference:skills",
+  allowCreate: true,
+  multiple: true,
+  validation: { required: true },
+}`,
+	},
+	{
+		title: "Chained conditionals",
+		desc: "The hardest case: a field whose visibility depends on a second field, whose own visibility depends on a third. The schema generator resolves this correctly on every change.",
+		label: "freelanceIntake.config.ts",
+		code: `{
+  name: "needsOngoingSupport",
+  type: "choiceCard",
+  label: "Do you need ongoing support after delivery?",
+},
+{
+  name: "supportTier",
+  type: "select",
+  showIf: { field: "needsOngoingSupport", equals: "yes" },
+  validation: { required: true },
+},
+{
+  name: "supportHoursPerMonth",
+  type: "number",
+  // only required once BOTH conditions above are satisfied
+  showIf: { field: "supportTier", equals: "premium" },
+  validation: { required: true, min: 1, max: 160 },
+}`,
+	},
+];
+
 export default function LandingPage() {
 	return (
 		<div
@@ -237,30 +376,17 @@ export default function LandingPage() {
 
 				<CodePanel
 					label="freelanceIntake.config.ts"
-					lines={[
-						{ text: "{" },
-						{ indent: 1, key: "name", value: '"hasBranding"' },
-						{ indent: 1, key: "type", value: '"choiceCard"' },
-						{
-							indent: 1,
-							key: "label",
-							value: '"Do you have existing branding?"',
-						},
-						{
-							indent: 1,
-							comment: "// this next field only renders when hasBranding = yes",
-						},
-						{ text: "}" },
-						{ text: "{" },
-						{ indent: 1, key: "name", value: '"brandAssets"' },
-						{ indent: 1, key: "type", value: '"fileUpload"' },
-						{
-							indent: 1,
-							key: "showIf",
-							value: '{ field: "hasBranding", equals: "yes" }',
-						},
-						{ text: "}" },
-					]}
+					code={`{
+  name: "hasBranding",
+  type: "choiceCard",
+  label: "Do you have existing branding?",
+  // this next field only renders when hasBranding = "yes"
+},
+{
+  name: "brandAssets",
+  type: "fileUpload",
+  showIf: { field: "hasBranding", equals: "yes" },
+}`}
 				/>
 			</section>
 
@@ -350,49 +476,31 @@ export default function LandingPage() {
 			</section>
 
 			<section className="landing-section">
-				<h2 className="landing-section-heading">Plug in your own config</h2>
+				<h2 className="landing-section-heading">The full config surface</h2>
 				<p className="landing-section-subheading">
-					Skip logic, conditional fields, and validation, all expressed the same
-					way - as data. Here's what powers the "skip an entire step" behavior
-					on the demo forms.
+					Everything above is a summary. This is the actual config API, the same
+					snippets you'd find by reading the source, without needing to go dig
+					for them.
 				</p>
 
-				<div className="grid gap-6 lg:grid-cols-2 items-start">
-					<CodePanel
-						label="warrantyClaim.config.ts"
-						lines={[
-							{ text: "{" },
-							{ indent: 1, key: "name", value: '"needsReturnShipping"' },
-							{ indent: 1, key: "type", value: '"choiceCard"' },
-							{ indent: 1, key: "skipStepIf", value: "{" },
-							{ indent: 2, key: "field", value: '"needsReturnShipping"' },
-							{ indent: 2, key: "equals", value: '"no"' },
-							{ indent: 2, key: "goTo", value: '"contact"' },
-							{ indent: 1, text: "}" },
-							{ text: "}" },
-						]}
-					/>
-
-					<div className="flex flex-col gap-4">
-						<p
-							style={{ color: "var(--color-text-muted)" }}
-							className="text-sm leading-relaxed">
-							When someone picks <span className="code-string">"no"</span> here,
-							the entire Shipping step is skipped - not just one field. The step
-							engine jumps straight to{" "}
-							<span className="code-string">"contact"</span>, and the schema
-							generator relaxes every field on the skipped step so it can never
-							block submission.
-						</p>
-						<p
-							style={{ color: "var(--color-text-muted)" }}
-							className="text-sm leading-relaxed">
-							The same mechanism handles the two-level chain on the Freelance
-							Intake form: a support tier field only appears if support is
-							needed at all, and an hours field only appears once the tier is
-							set to <span className="code-string">"premium"</span>.
-						</p>
-					</div>
+				<div className="flex flex-col gap-10">
+					{CONFIG_EXAMPLES.map((example) => (
+						<div
+							className="grid gap-6 lg:grid-cols-2 items-start"
+							key={example.title}>
+							<CodePanel label={example.label} code={example.code} />
+							<div>
+								<p className="feature-title" style={{ fontSize: 15 }}>
+									{example.title}
+								</p>
+								<p
+									style={{ color: "var(--color-text-muted)" }}
+									className="text-sm leading-relaxed">
+									{example.desc}
+								</p>
+							</div>
+						</div>
+					))}
 				</div>
 			</section>
 
@@ -463,15 +571,14 @@ export default function LandingPage() {
 	);
 }
 
-interface CodeLine {
-	indent?: number;
-	text?: string;
-	key?: string;
-	value?: string;
-	comment?: string;
+interface CodePanelProps {
+	label: string;
+	code: string;
 }
 
-function CodePanel({ label, lines }: { label: string; lines: CodeLine[] }) {
+function CodePanel({ label, code }: CodePanelProps) {
+	const lines = code.replace(/^\n/, "").replace(/\n$/, "").split("\n");
+
 	return (
 		<div className="code-panel">
 			<div className="code-panel-header">
@@ -491,29 +598,68 @@ function CodePanel({ label, lines }: { label: string; lines: CodeLine[] }) {
 			</div>
 			<pre className="code-panel-body">
 				{lines.map((line, i) => (
-					<div key={i} style={{ paddingLeft: (line.indent ?? 0) * 16 }}>
-						{line.comment ? (
-							<span className="code-comment">{line.comment}</span>
-						) : line.key ? (
-							<>
-								<span className="code-key">{line.key}</span>:{" "}
-								{renderValue(line.value ?? "")}
-								{line.text ? " " + line.text : ","}
-							</>
-						) : (
-							<span>{line.text}</span>
-						)}
-					</div>
+					<div key={i}>{highlightLine(line)}</div>
 				))}
 			</pre>
 		</div>
 	);
 }
 
-function renderValue(value: string) {
-	if (value.startsWith('"'))
-		return <span className="code-string">{value}</span>;
-	if (value === "true" || value === "false")
-		return <span className="code-bool">{value}</span>;
-	return <span>{value}</span>;
+// A line is either a full-line comment, a "key: value" pair (possibly followed
+// by more on the same line, e.g. "field: "x", equals: "y""), or punctuation
+// only ("{", "}", "},"). Leading whitespace is preserved as literal spaces
+// since code-panel-body is a <pre>, so indentation renders correctly.
+function highlightLine(line: string) {
+	const leadingMatch = line.match(/^(\s*)/);
+	const indent = leadingMatch ? leadingMatch[1] : "";
+	const rest = line.slice(indent.length);
+
+	if (rest.trim().startsWith("//")) {
+		return (
+			<>
+				{indent}
+				<span className="code-comment">{rest}</span>
+			</>
+		);
+	}
+
+	// Split the rest into segments, coloring quoted strings, booleans, and
+	// bare identifiers immediately followed by a colon (object keys).
+	const tokenPattern =
+		/("(?:[^"\\]|\\.)*")|(\btrue\b|\bfalse\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)(?=\s*:)/g;
+	const segments: Array<
+		string | { type: "string" | "bool" | "key"; text: string }
+	> = [];
+	let lastIndex = 0;
+	let match: RegExpExecArray | null;
+
+	while ((match = tokenPattern.exec(rest)) !== null) {
+		if (match.index > lastIndex)
+			segments.push(rest.slice(lastIndex, match.index));
+		if (match[1]) segments.push({ type: "string", text: match[1] });
+		else if (match[2]) segments.push({ type: "bool", text: match[2] });
+		else if (match[3]) segments.push({ type: "key", text: match[3] });
+		lastIndex = tokenPattern.lastIndex;
+	}
+	if (lastIndex < rest.length) segments.push(rest.slice(lastIndex));
+
+	return (
+		<>
+			{indent}
+			{segments.map((seg, i) => {
+				if (typeof seg === "string") return <span key={i}>{seg}</span>;
+				const className =
+					seg.type === "string"
+						? "code-string"
+						: seg.type === "bool"
+						? "code-bool"
+						: "code-key";
+				return (
+					<span className={className} key={i}>
+						{seg.text}
+					</span>
+				);
+			})}
+		</>
+	);
 }
