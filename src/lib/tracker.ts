@@ -20,6 +20,7 @@ export async function initTracking() {
 		},
 		body: JSON.stringify({
 			sessionId,
+			site: window.location.origin,
 			pathname: window.location.pathname,
 			referrer: document.referrer,
 			language: navigator.language,
