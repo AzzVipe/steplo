@@ -23,6 +23,7 @@ export default async (req: Request) => {
 		{
 			session_id: body.sessionId,
 			ip,
+			site: body.site,
 			pathname: body.pathname,
 			referrer: body.referrer,
 			user_agent: body.userAgent,
